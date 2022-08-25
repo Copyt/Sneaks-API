@@ -66,3 +66,11 @@ jobs:
                       docker.io/breadwinnerinc/copyt-sneaks:master-${{ steps.buildnumber.outputs.build_number }}
             - name: Image digest
               run: echo ${{ steps.docker_build.outputs.digest }}
+            
+            - name: Deploy to Rancher
+              run: |
+                curl -u "${{ secrets.RANCHER_API }}" \
+                -X PATCH \
+                -H 'Content-Type: application/json-patch+json' \
+                https://rancher-sys.krum.io/k8s/clusters/c-hw822/apis/apps/v1/namespaces/development/deployments/platform-sneaks-api \
+                -d '[{"op": "replace", "path": "/spec/template/spec/containers/0/image", "value": "breadwinnerinc/copyt-sneaks:master-${{ steps.buildnumber.outputs.build_number }}"}]' \
