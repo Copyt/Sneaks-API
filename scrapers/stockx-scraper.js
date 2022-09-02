@@ -121,7 +121,7 @@ module.exports = {
 
       // console.log('json', json)
       const response = await axios.get(
-        "https://stockx.com/api/products/" + shoe.urlKey + "?includes=market",
+        "http://stockx.com/api/products/" + shoe.urlKey + "?includes=market",
         {
           headers: {
             accept: "application/json",
