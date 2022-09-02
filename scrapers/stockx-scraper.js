@@ -1,5 +1,8 @@
 const got = require("got");
+const axios = require("axios").default;
+// const HttpsProxyAgent = require("https-proxy-agent");
 const Sneaker = require("../models/Sneaker");
+// const agent = new HttpsProxyAgent("http://1.255.134.136:3128");
 
 function normalMatch(sku, styleId) {
   return sku.toLocaleLowerCase() === styleId.toLocaleLowerCase();
@@ -104,17 +107,33 @@ module.exports = {
   getPrices: async function (shoe, callback) {
     let priceMap = {};
     try {
-      const response = await got(
+      // const response = await got(
+      //   "https://stockx.com/api/products/" + shoe.urlKey + "?includes=market",
+      //   {
+      //     headers: {
+      //       "User-Agent":
+      //         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_2) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.4 Safari/605.1.15",
+      //     },
+      //     http2: true,
+      //   }
+      // );
+      // let json = JSON.parse(response.body);
+
+      // console.log('json', json)
+      const response = await axios.get(
         "https://stockx.com/api/products/" + shoe.urlKey + "?includes=market",
         {
           headers: {
+            accept: "application/json",
             "User-Agent":
               "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_2) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.4 Safari/605.1.15",
           },
-          http2: true,
+          // httpsAgent: agent,
         }
       );
-      let json = JSON.parse(response.body);
+      // console.log("response", response.data);
+      let json = response.data;
+
       Object.keys(json.Product.children).forEach(function (key) {
         if (json.Product.children[key].market.lowestAsk == 0) return;
         //if size is in womens, then remove "W"
@@ -129,10 +148,10 @@ module.exports = {
     } catch (error) {
       console.log(error);
       let err = new Error(
-        "Could not connect to StockX while searching '",
-        shoe?.styleID,
-        "' Error: ",
-        error
+        "Could not connect to StockX while searching '" +
+          shoe?.styleID +
+          "' Error: " +
+          error
       );
       console.log(err);
       callback(err);
