@@ -5,7 +5,7 @@ ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
 ENV PATH=$PATH:/home/node/.npm-global/bin
 
 COPY package.json package-lock.json /temp/
-RUN cd temp && npm ci && npm install -g nodemon
+RUN cd temp && npm ci --allow-root && npm install -g nodemon
 
 COPY . /src
 
