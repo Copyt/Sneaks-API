@@ -4,7 +4,6 @@ LABEL maintainer="Colin Griffin <colin@krum.io>"
 ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
 ENV PATH=$PATH:/home/node/.npm-global/bin
 
-RUN apk add --update  expect
 
 COPY package.json package-lock.json /temp/
 RUN cd temp && npm ci --unsafe-perm=true --allow-root && npm install -g nodemon
